@@ -1,9 +1,11 @@
-src = $(wildcard *.c */*.c)
-obj = ${src:.c=.o}
 
 CC = gcc
 CFLAGS = -g -Iinclude
-LDFLAGS =
+LDFLAGS = -lncurses
+
+src = $(wildcard *.c */*.c) src/display/display_ncurses.c
+obj = ${src:.c=.o}
+
 
 all: pikno
 

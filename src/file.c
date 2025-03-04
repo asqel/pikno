@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "win.h"
 
+
+static int is_binary(char c) {
+	return c < 0x09 || (0x0D <= c && c < 0x20) || c == 0x7F;
+}
 // remove \r
 char *fix_file(char *content) {
 	char *res = malloc(strlen(content) + 1);
@@ -9,7 +14,7 @@ char *fix_file(char *content) {
 	}
 	int j = 0;
 	for (int i = 0; i < strlen(content); i++) {
-		if (content[i] != '\r') {
+		if (!is_binary(content[i])) {
 			res[j] = content[i];
 			j++;
 		}
@@ -23,7 +28,7 @@ char *read_file(char *path) {
 	fseek(f, 0, SEEK_END);
 	int size = ftell(f);
 	char *buffer = malloc(size + 1);
-	if (buffer == NULL) {
+	if (NULL == buffer) {
 		fclose(f);
 		return NULL;
 	}
