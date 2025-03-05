@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-window_t new_window(int x, int y, int width, int height, char *text) {
+window_t new_window(int x, int y, int width, int height, wchar_t *text) {
 	window_t win = {0};
 	win.x = x;
 	win.y = y;
@@ -15,23 +15,23 @@ window_t new_window(int x, int y, int width, int height, char *text) {
 }
 
 
-static int count_lines(char *text) {
+static int count_lines(wchar_t *text) {
 	int res = 1;
-	int len = strlen(text);
+	int len = wcslen(text);
 	for (int i = 0; i < len; i++)
-		if ('\n' == text[i])
+		if (L'\n' == text[i])
 			res++;
 	return res;
 }
 
-static int get_line_len(char *line) {
+static int get_line_len(wchar_t *line) {
 	int res = 0;
-	while ('\n' != line[res] && '\0' != line[res])
+	while (L'\n' != line[res] && L'\0' != line[res])
 		res++;
 	return res;
 }
 
-text_t *new_text(char *text) {
+text_t *new_text(wchar_t *text) {
 	text_t *res = {0};
 
 	res = calloc(sizeof(text_t), 1);
@@ -47,7 +47,7 @@ text_t *new_text(char *text) {
 
 	int i = 0;
 	int current_line = 0;
-	while ('\0' != text[i]) {
+	while (L'\0' != text[i]) {
 		int line_len = get_line_len(&text[i]);
 		res->text[current_line] = calloc(sizeof(char_t), (line_len + 1));
 		if (NULL == res->text[current_line]) {
@@ -62,10 +62,10 @@ text_t *new_text(char *text) {
 			res->text[current_line][k].bgcolor = 0;
 			res->text[current_line][k].ch = text[i + k];
 		}
-		res->text[current_line][line_len].ch = '\0';
+		res->text[current_line][line_len].ch = L'\0';
 		i += line_len + 1;
 		current_line++;
-		if ('\0' == text[i] && current_line < res->text_height) {
+		if (L'\0' == text[i] && current_line < res->text_height) {
 			res->text[current_line] = malloc(sizeof(char_t));
 			if (NULL == res->text[current_line]) {
 				for (int k = 0; k < current_line; k++)
@@ -74,7 +74,7 @@ text_t *new_text(char *text) {
 				free(res);
 				return NULL;
 			}
-			res->text[current_line][0].ch = '\0';
+			res->text[current_line][0].ch = L'\0';
 			current_line++;
 		}
 	}

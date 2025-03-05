@@ -6,23 +6,47 @@
 #include <ncurses.h>
 #include <stdlib.h>
 
+#define FPS 30
+// é
+
 int main(int argc, char **argv) {
-	char *file = read_file("main.c");
+	wchar_t *file = read_file("main.c");
 	if (file == NULL) {
 		printf("Error reading file\n");
 		return 1;
 	}
 
-	window_t win = new_window(0, 0, 80, 25, file);
-	for (int i = 0; i < win.text->text_height; i++) {
-		if (win.text->text[i] == NULL) {
-			continue;
+	window_t win = new_window(1, 1, 80, 25, file);
+	display_init();
+	//printf("truc %d\n", win.text->text[9][3].ch);
+	//mvaddch(0, 0, win.text->text[9][3].ch);
+	//refresh();
+//
+	//return 0;
+
+	while (1) {
+		display_wins(&win, 1);
+		display_update();
+		usleep(1000 * 1000 / FPS);
+
+		int c = getch();
+		if (c == 'q') {
+			break;
 		}
-		for (int j = 0; j < win.text->text[i][j].ch != '\0'; j++) {
-			printf("%c", win.text->text[i][j].ch);
+		if (c == 'w') {
+			win.view_y--;
 		}
-		printf("\n");
+		if (c == 's') {
+			win.view_y++;
+		}
+		if (c == 'a') {
+			win.view_x--;
+		}
+		if (c == 'd') {
+			win.view_x++;
+		}
 	}
+	display_exit();
 	//free(file);
 
 	//initscr();

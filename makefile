@@ -1,9 +1,9 @@
 
 CC = gcc
-CFLAGS = -g -Iinclude
-LDFLAGS = -lncurses
+CFLAGS = -g -Iinclude -DUSE_NCURSES
+LDFLAGS = -lncursesw
 
-src = $(wildcard *.c */*.c) src/display/display_ncurses.c
+src = $(wildcard *.c */*.c)
 obj = ${src:.c=.o}
 
 

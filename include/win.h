@@ -2,11 +2,12 @@
 #define WIN_H
 
 #include <stdint.h>
+#include <wchar.h>
 
 typedef struct {
 	uint32_t color;
 	uint32_t bgcolor;
-	uint16_t ch; // character
+	uint32_t ch; // character
 } char_t;
 
 typedef struct {
@@ -29,8 +30,11 @@ typedef struct {
 
 } window_t;
 
-char **strsplit(char *str, char *delim, int *count);
-window_t new_window(int x, int y, int width, int height, char *text);
-text_t *new_text(char *text);
+window_t new_window(int x, int y, int width, int height, wchar_t *text);
+text_t *new_text(wchar_t *text);
+void display_wins(window_t *win, int len);
+void display_init();
+void display_update();
+void display_exit();
 
 #endif
