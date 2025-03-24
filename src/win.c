@@ -58,8 +58,7 @@ text_t *new_text(wchar_t *text) {
 			return NULL;
 		}
 		for (int k = 0; k < line_len; k++) {
-			res->text[current_line][k].color = 0;
-			res->text[current_line][k].bgcolor = 0;
+			res->text[current_line][k] = (char_t){0};
 			res->text[current_line][k].ch = text[i + k];
 		}
 		res->text[current_line][line_len].ch = L'\0';

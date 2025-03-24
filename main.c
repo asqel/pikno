@@ -6,7 +6,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 
-#define FPS 30
+#define FPS 60
 // é
 
 int main(int argc, char **argv) {
@@ -15,36 +15,42 @@ int main(int argc, char **argv) {
 		printf("Error reading file\n");
 		return 1;
 	}
-
 	window_t win = new_window(1, 1, 80, 25, file);
 	display_init();
-	//printf("truc %d\n", win.text->text[9][3].ch);
-	//mvaddch(0, 0, win.text->text[9][3].ch);
-	//refresh();
-//
-	//return 0;
-
+	FILE *f = fopen("log.txt", "w");
+	int nee_refresh = 1;
 	while (1) {
-		display_wins(&win, 1);
-		display_update();
-		usleep(1000 * 1000 / FPS);
 
+		if (nee_refresh)
+		{
+			display_wins(&win, 1);
+			display_update();
+			nee_refresh = 0;
+		}
 		int c = getch();
 		if (c == 'q') {
 			break;
 		}
 		if (c == 'w') {
-			win.view_y--;
+			win.cursor_y--;
+			nee_refresh = 1;
 		}
 		if (c == 's') {
-			win.view_y++;
+			win.cursor_y++;
+			nee_refresh = 1;
 		}
 		if (c == 'a') {
-			win.view_x--;
+			win.cursor_x--;
+			nee_refresh = 1;
 		}
 		if (c == 'd') {
-			win.view_x++;
+			win.cursor_x++;
+			nee_refresh = 1;
 		}
+		usleep(1000 * 1000 / FPS);
+		fprintf(f, "%d %d\n", win.cursor_x, win.cursor_y);
+		fflush(f);
+
 	}
 	display_exit();
 	//free(file);
