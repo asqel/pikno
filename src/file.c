@@ -33,6 +33,8 @@ wchar_t *fix_file(wchar_t *content) {
 
 char *read_file_char(char *path) {
 	FILE *f = fopen(path, "rb");
+	if (f == NULL)
+		return NULL;
 	fseek(f, 0, SEEK_END);
 	int size = ftell(f);
 	char *buffer = malloc(size + 1);

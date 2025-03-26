@@ -49,7 +49,7 @@ text_t *new_text(wchar_t *text) {
 	int current_line = 0;
 	while (L'\0' != text[i]) {
 		int line_len = get_line_len(&text[i]);
-		res->text[current_line] = calloc(sizeof(char_t), (line_len + 1));
+		res->text[current_line] = calloc(sizeof(char_t), (line_len + 2));
 		if (NULL == res->text[current_line]) {
 			for (int k = 0; k < current_line; k++)
 				free(res->text[k]);
@@ -61,11 +61,12 @@ text_t *new_text(wchar_t *text) {
 			res->text[current_line][k] = (char_t){0};
 			res->text[current_line][k].ch = text[i + k];
 		}
-		res->text[current_line][line_len].ch = L'\0';
+		res->text[current_line][line_len].ch = L'\n';
+		res->text[current_line][line_len + 1].ch = L'\0';
 		i += line_len + 1;
 		current_line++;
 		if (L'\0' == text[i] && current_line < res->text_height) {
-			res->text[current_line] = malloc(sizeof(char_t));
+			res->text[current_line] = malloc(sizeof(char_t) * 2);
 			if (NULL == res->text[current_line]) {
 				for (int k = 0; k < current_line; k++)
 					free(res->text[k]);
@@ -73,7 +74,8 @@ text_t *new_text(wchar_t *text) {
 				free(res);
 				return NULL;
 			}
-			res->text[current_line][0].ch = L'\0';
+			res->text[current_line][0].ch = L'\n';
+			res->text[current_line][1].ch = L'\0';
 			current_line++;
 		}
 	}

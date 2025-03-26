@@ -5,52 +5,55 @@
 #include <unistd.h>
 #include <ncurses.h>
 #include <stdlib.h>
+#include <signal.h>
 
 #define FPS 60
 // é
 
+void signal_handler(int sig) {
+}
+
 int main(int argc, char **argv) {
-	wchar_t *file = read_file("main.c");
+	if (argc != 2) {
+		printf("Usage: %s <file>\n", argv[0]);
+		return 1;
+	}
+	wchar_t *file = read_file(argv[1]);
 	if (file == NULL) {
 		printf("Error reading file\n");
 		return 1;
 	}
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, signal_handler);
 	window_t win = new_window(1, 1, 80, 25, file);
+	win.is_focused = 1;
 	display_init();
-	FILE *f = fopen("log.txt", "w");
-	int nee_refresh = 1;
+	win.cursor_y = 10;
+	win.cursor_x = 0;
+	int need_refresh = 1;
 	while (1) {
 
-		if (nee_refresh)
+		if (need_refresh)
 		{
+			int old_cursor_x = win.cursor_x;
+			int line_len = 0;
+			while (win.text->text[win.cursor_y][line_len].ch != '\0')
+				line_len++;
+			if (win.cursor_x >= line_len) {
+				win.cursor_x = line_len - 1;
+			}
 			display_wins(&win, 1);
 			display_update();
-			nee_refresh = 0;
-		}
-		int c = getch();
-		if (c == 'q') {
-			break;
-		}
-		if (c == 'w') {
-			win.cursor_y--;
-			nee_refresh = 1;
-		}
-		if (c == 's') {
-			win.cursor_y++;
-			nee_refresh = 1;
-		}
-		if (c == 'a') {
-			win.cursor_x--;
-			nee_refresh = 1;
-		}
-		if (c == 'd') {
-			win.cursor_x++;
-			nee_refresh = 1;
-		}
-		usleep(1000 * 1000 / FPS);
-		fprintf(f, "%d %d\n", win.cursor_x, win.cursor_y);
-		fflush(f);
+			need_refresh = 0;
+			win.cursor_x = old_cursor_x;
 
+		}
+		int ret = handle_keys(&win, 1);
+		if (ret == 1)
+			need_refresh = 1;
+		if (ret == 2)
+			break;
+		usleep(1000 * 1000 / FPS);
 	}
 	display_exit();
 	//free(file);

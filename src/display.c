@@ -35,7 +35,7 @@ void display_init() {
 		noecho();
 		scrollok(stdscr, FALSE);
 		curs_set(TRUE);
-		timeout(500);
+		timeout(100);
 		// init color pairs
 		start_color();
 		for (int fg = 0; fg < 9; fg++)
@@ -69,6 +69,13 @@ static void display_window(window_t win) {
 			cursor_screen_y = screen_y + win.y;
 		}
 		while (screen_x < win.width && text_x < line_len) {
+			if (win.text->text[text_y][text_x].ch == '\n') {
+				if (text_y == win.cursor_y && text_x == win.cursor_x) {
+					cursor_screen_x = screen_x + win.x;
+					cursor_screen_y = screen_y + win.y;
+				}
+				break;
+			}
 			if (text_x < 0) {
 				text_x++;
 				screen_x++;
@@ -84,7 +91,7 @@ static void display_window(window_t win) {
 			}
 			else {
 				win_screen[screen_y * win.width + screen_x] = ' ';
-				screen_x += (4 - (text_x % 4));
+				screen_x += (4 - (screen_x % 4));
 			}
 			text_x++;
 		}
@@ -123,6 +130,7 @@ void display_update() {
 
 	#else
 		#error "Unsupported platform in file display.c"
+		// you should implement the refresh and the drawing of the cursor
 	#endif
 }
 

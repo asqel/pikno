@@ -32,7 +32,7 @@ typedef struct {
 	int cursor_y;
 	int view_x;
 	int view_y;
-
+	int is_focused;
 
 } window_t;
 
