@@ -10,6 +10,11 @@ window_t new_window(int x, int y, int width, int height, wchar_t *text) {
 	win.height = height;
 
 	win.text = new_text(text);
+	if (win.text->text[0] == NULL) {
+		win.text->text[0] = calloc(sizeof(char_t), 2);
+		win.text->text[0][0].ch = L'\n';
+		win.text->text[0][1].ch = L'\0';
+	}
 
 	return win;
 }
@@ -39,7 +44,7 @@ text_t *new_text(wchar_t *text) {
 		return NULL;
 
 	res->text_height = count_lines(text);
-	res->text = malloc(sizeof(char_t *) * res->text_height);
+	res->text = calloc(sizeof(char_t *), res->text_height);
 	if (NULL == res->text) {
 		free(res);
 		return NULL;
@@ -66,7 +71,7 @@ text_t *new_text(wchar_t *text) {
 		i += line_len + 1;
 		current_line++;
 		if (L'\0' == text[i] && current_line < res->text_height) {
-			res->text[current_line] = malloc(sizeof(char_t) * 2);
+			res->text[current_line] = calloc(sizeof(char_t), 2);
 			if (NULL == res->text[current_line]) {
 				for (int k = 0; k < current_line; k++)
 					free(res->text[k]);

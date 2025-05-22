@@ -1,6 +1,21 @@
 
 #include "win.h"
+#include <stdint.h>
 
+#define PIKNO_KEY_TEXT 1
+#define PIKNO_KEY_SPECIAL 2
+
+typedef struct {
+	uint8_t type;
+	union {
+		uint32_t text;
+		struct {
+			uint8_t is_alt;
+			uint8_t is_ctrl;
+			uint16_t value;
+		} special;
+	} data;
+} pikno_key_t;
 
 #if defined(USE_NCURSES)
 	#include <ncurses.h>
@@ -28,7 +43,7 @@ int handle_keys(window_t *wins, int len) {
 		f = fopen("log.txt", "w");
 	fprintf(f, "key %d %d\n", key, key == 0x1b);
 	fflush(f);
-	if (key == 0x1b) {
+	if (key == '\e') {
 		key = get_key();
 		fprintf(f, "ici %d\n", key);
 		fflush(f);

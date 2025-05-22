@@ -6,6 +6,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <sys/stat.h>
 
 #define FPS 60
 // é
@@ -26,9 +27,14 @@ int main(int argc, char **argv) {
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, signal_handler);
 	window_t win = new_window(1, 1, 80, 25, file);
+	//for (int i = 0; i < win.text->text_height; i++) {
+	//	for (int k = 0; win.text->text[i][k].ch != '\0'; k++)
+	//		printf("0x%x\n", win.text->text[i][k].ch);
+	//}
+//	return 0;
 	win.is_focused = 1;
 	display_init();
-	win.cursor_y = 10;
+	win.cursor_y = 0;
 	win.cursor_x = 0;
 	int need_refresh = 1;
 	while (1) {
